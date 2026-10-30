@@ -9,6 +9,7 @@ router.post("/login", (req, res) => userController.login(req, res));
 router.use(authMiddleware);
 
 router.get("/profile", (req, res) => userController.getProfile(req, res));
+router.patch("/profile", (req, res) => userController.updateProfile(req, res));
 router.get("/all", (req, res) => userController.getAllUsers(req, res));
 
 router.get("/students", (req, res) => userController.getAllStudents(req, res));

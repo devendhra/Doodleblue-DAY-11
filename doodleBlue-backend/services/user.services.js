@@ -64,6 +64,18 @@ class UserService {
     ).select("-password");
   }
 
+  async updateSelf(id, data) {
+    const updates = {};
+    if (data.name) updates.name = data.name;
+    if (data.email) updates.email = data.email;
+    if (data.password) updates.password = await bcrypt.hash(data.password, 10);
+    return User.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      updates,
+      { returnDocument: "after" }
+    ).select("-password");
+  }
+
   async softDelete(id) {
     return User.findOneAndUpdate(
       { _id: id, isDeleted: false },

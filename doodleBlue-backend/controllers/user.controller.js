@@ -12,8 +12,8 @@ class UserController {
         return res.status(400).json({ message: "Role must be 'student' or 'faculty'" });
       }
 
-      const user = await userServices.signup({ name, email, password, role });
-      res.status(201).json({ message: "Signup successful", user });
+      const result = await userServices.signup({ name, email, password, role });
+      res.status(201).json({ message: "Signup successful", ...result });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -41,6 +41,19 @@ class UserController {
       res.status(200).json({ user });
     } catch (error) {
       res.status(500).json({ message: error.message });
+    }
+  }
+
+  // Update own profile (any logged-in user, both roles)
+  async updateProfile(req, res) {
+    try {
+      const updated = await userServices.updateSelf(req.user.id, req.body);
+      if (!updated) return res.status(404).json({ message: "User not found" });
+      res.status(200).json({ message: "Profile updated", user: updated });
+    } catch (error) {
+      const status = error.code === 11000 ? 400 : 500;
+      const message = error.code === 11000 ? "Email already in use" : error.message;
+      res.status(status).json({ message });
     }
   }
 
